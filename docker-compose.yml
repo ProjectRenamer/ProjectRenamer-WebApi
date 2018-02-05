@@ -1,0 +1,57 @@
+version : "3"
+
+services:
+  
+  db :
+    image : mysql/mysql-server:5.7
+    environment :
+      - MYSQL_USER=AppUser
+      - MYSQL_PASSWORD=AppPass
+      - MYSQL_ROOT_PASSWORD=                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+      - MYSQL_DATABASE=ProjectDb
+      - MYSQL_ROOT_HOST=%
+    ports:
+      - 3306:3306
+    volumes:
+      - /var/container_data/ProjectRenamer/mysql:/var/lib/mysql
+
+      
+  migration:
+    image: shouldbee/flyway
+    command: -url=jdbc:mysql://db/ProjectDb -schemas=ProjectDb -user=root -password=rootpass migrate
+    volumes:
+      - ./ProjectRenamer/DbMigrations:/flyway/sql
+    restart: on-failure
+    depends_on:
+      - db
+    links:
+      - db
+
+  webapi :
+    build :
+      context : ./ProjectRenamer
+      dockerfile : Dockerfile
+    image : dotnet-template
+    expose :
+      - 80
+    restart: always
+    links:
+      - db
+
+  lb:
+    image: dockercloud/haproxy:1.6.7
+    links:
+      - webapi
+    ports:
+      - 8081:80
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+
+  webui : 
+    build : 
+      context : ./projectrenamer-ui
+      dockerfile : Dockerfile
+    image : projectrenamer-ui
+    ports :
+      - 8080:80
