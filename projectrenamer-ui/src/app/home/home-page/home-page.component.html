@@ -1,28 +1,48 @@
 <div class="row">
-  <label>Project Name</label>
-  <input type="text" name="projectName" />
+  <label class="col-xs-2">Project Name</label>
+  <input class="col-xs-3 form-control" type="text" [(ngModel)]="projectName" />
+
+  <div class="lox-xs-2"></div>
+
+  <label class="col-xs-2">Project Link</label>
+  <input class="col-xs-3 form-control" type="text" [(ngModel)]="projectUrl" />
 </div>
 
 <table class="row">
   <tr>
-    <th>
+    <th class="col-xs-5">
       Place Holder
     </th>
-    <th>
+    <th class="col-xs-5">
       Value
     </th>
+    <th class="col-xs-2"></th>
+  </tr>
+  <tr>
+    <td>
+      <input type="text" class="form-control" [(ngModel)]="currentKV.key" />
+    </td>
+    <td>
+      <input type="text" class="form-control" [(ngModel)]="currentKV.value" />
+    </td>
+    <td>
+      <button type="button" class="btn btn-default" (click)="add(currentKV.key, currentKV.value);">Add</button>
+    </td>
   </tr>
 
   <tr *ngFor="let kv of keyValues; let i = index;">
     <td>
-      <input type="text" class="form-control" [ngModel]="keyValues[i].key" />
+      {{kv.key}}
     </td>
     <td>
-      <input type="text" class="form-control" [ngModel]="keyValues[i].value" />
+      {{kv.value}}
     </td>
     <td>
-      <button type="button" class="btn btn-default" (click)="add(keyValues[i].key, keyValues[i].value);">Add</button>
       <button type="button" class="btn btn-default" (click)="remove(i);">Remove</button>
     </td>
   </tr>
 </table>
+
+<div class="row">
+  <button type="button" (click)="generate();">Generate</button>
+</div>

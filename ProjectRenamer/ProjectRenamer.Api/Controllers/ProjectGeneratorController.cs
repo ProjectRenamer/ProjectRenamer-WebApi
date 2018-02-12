@@ -17,33 +17,33 @@ namespace ProjectRenamer.Api.Controllers
     {
         private const string CONTENT_TYPE = "application/zip";
 
-        [HttpPost, Route("generator/{repositoryLink}")]
-        public FileContentResult Generate([FromRoute] string repositoryLink, [FromBody] GenerateProjectRequest generateProjectRequest)
+        [HttpPost, Route("generator")]
+        public FileContentResult Generate([FromBody] GenerateProjectRequest generateProjectRequest)
         {
-            if (generateProjectRequest.IsValid(out string validationMessage))
+            if (!generateProjectRequest.IsValid(out string validationMessage))
             {
                 throw new CustomApiException(validationMessage, HttpStatusCode.BadRequest);
             }
 
             CloneOptions cloneOptions = new CloneOptions
-                                        {
-                                            CredentialsProvider = (_url, _user, _cred) => new UsernamePasswordCredentials
-                                                                                          {
-                                                                                              Username = generateProjectRequest.UserName,
-                                                                                              Password = generateProjectRequest.Password
-                                                                                          }
-                                        };
+            {
+                CredentialsProvider = (_url, _user, _cred) => new UsernamePasswordCredentials
+                {
+                    Username = generateProjectRequest.UserName,
+                    Password = generateProjectRequest.Password
+                }
+            };
 
             SolutionGenerator solutionGenerater = new SolutionGenerator();
-            Byte[] zipBytes = solutionGenerater.Generate(repositoryLink, generateProjectRequest.ProjectName, generateProjectRequest.RenamePairs, cloneOptions);
+            Byte[] zipBytes = solutionGenerater.Generate(generateProjectRequest.RepositoryLink, generateProjectRequest.ProjectName, generateProjectRequest.RenamePairs, cloneOptions);
 
             DirectoryInfo directory = Directory.GetParent(Directory.GetCurrentDirectory());
             string zipPath = Path.Combine(directory.FullName, $"{generateProjectRequest.ProjectName}.zip");
 
             return new FileContentResult(zipBytes, CONTENT_TYPE)
-                   {
-                       FileDownloadName = zipPath
-                   };
+            {
+                FileDownloadName = zipPath
+            };
         }
     }
 }

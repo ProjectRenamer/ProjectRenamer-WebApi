@@ -1,4 +1,6 @@
 import { Component, OnInit, KeyValueDiffers } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '@env/environment';
 
 @Component({
   selector: 'app-home-page',
@@ -7,9 +9,12 @@ import { Component, OnInit, KeyValueDiffers } from '@angular/core';
 })
 export class HomePageComponent implements OnInit {
 
-  keyValues = [{ key: '', value: '' }];
+  projectUrl: string;
+  keyValues = [];
+  currentKV = { key: '', value: '' };
+  projectName = '';
 
-  constructor() {
+  constructor(private httpClient: HttpClient) {
 
   }
 
@@ -17,15 +22,30 @@ export class HomePageComponent implements OnInit {
   }
 
   add(placeHolder: string, val: string) {
-    this.keyValues.push({ key: '', value: '' });
-
-    this.keyValues.forEach(element => {
-      console.log(element.key + ' ' + element.value);
-    });
+    this.keyValues.push({ key: placeHolder, value: val });
+    this.currentKV = { key: '', value: '' };
   }
 
   remove(index: number) {
     this.keyValues.splice(index, 1);
+  }
+
+  generate() {
+    const filename = this.projectName + '.zip';
+
+    this.httpClient.post(environment.DotNetTemplateUrl + '/generator/', {
+      'projectName': this.projectName,
+      'repositoryLink': this.projectUrl,
+      'renamePairs': this.currentKV
+    })
+      .subscribe((response) => {
+        let blobResponse;
+        if (response instanceof Response) {
+          blobResponse = response.blob();
+        }
+        blobResponse = response;
+
+      });
   }
 
 }
