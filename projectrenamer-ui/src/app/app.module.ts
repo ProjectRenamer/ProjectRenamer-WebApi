@@ -6,16 +6,13 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { appRouter } from './app.routing';
 
 import { CustomErrorHandler } from '@app/core/error-handling/custom-error-handler';
-import { AuthTokenInterceptor } from '@app/core/auth/auth-token-interceptor';
 
 import { AppComponent } from './app.component';
-import { HorizontalMenuComponent } from './horizontal-menu/horizontal-menu.component';
 
 
 @NgModule({
   declarations: [
-    AppComponent,
-    HorizontalMenuComponent,
+    AppComponent
   ],
   imports: [
     appRouter,
@@ -26,12 +23,7 @@ import { HorizontalMenuComponent } from './horizontal-menu/horizontal-menu.compo
     {
       provide: ErrorHandler,
       useClass: CustomErrorHandler
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthTokenInterceptor,
-      multi: true
-    },
+    }
   ],
   bootstrap: [AppComponent]
 })

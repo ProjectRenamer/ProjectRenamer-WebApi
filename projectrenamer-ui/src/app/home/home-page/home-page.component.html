@@ -1,3 +1,28 @@
-<p>
-  home-page works!
-</p>
+<div class="row">
+  <label>Project Name</label>
+  <input type="text" name="projectName" />
+</div>
+
+<table class="row">
+  <tr>
+    <th>
+      Place Holder
+    </th>
+    <th>
+      Value
+    </th>
+  </tr>
+
+  <tr *ngFor="let kv of keyValues; let i = index;">
+    <td>
+      <input type="text" class="form-control" [ngModel]="keyValues[i].key" />
+    </td>
+    <td>
+      <input type="text" class="form-control" [ngModel]="keyValues[i].value" />
+    </td>
+    <td>
+      <button type="button" class="btn btn-default" (click)="add(keyValues[i].key, keyValues[i].value);">Add</button>
+      <button type="button" class="btn btn-default" (click)="remove(i);">Remove</button>
+    </td>
+  </tr>
+</table>
