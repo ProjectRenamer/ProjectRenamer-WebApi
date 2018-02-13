@@ -36,16 +36,16 @@ export class HomePageComponent implements OnInit {
     this.httpClient.post(environment.DotNetTemplateUrl + '/generator/', {
       'projectName': this.projectName,
       'repositoryLink': this.projectUrl,
-      'renamePairs': this.currentKV
+      'renamePairs': this.keyValues
     })
       .subscribe((response) => {
-        let blobResponse;
-        if (response instanceof Response) {
-          blobResponse = response.blob();
-        }
-        blobResponse = response;
-
-      });
+        const blob = new Blob([response], { type: 'application/zip' });
+        const url = window.URL.createObjectURL(blob);
+        window.open(url);
+      },
+        err => {
+          throw err;
+        });
   }
 
 }
