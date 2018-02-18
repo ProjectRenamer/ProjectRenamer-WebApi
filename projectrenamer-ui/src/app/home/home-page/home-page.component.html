@@ -1,48 +1,55 @@
 <div class="row">
-  <label class="col-xs-2">Project Name</label>
-  <input class="col-xs-3 form-control" type="text" [(ngModel)]="projectName" />
 
-  <div class="lox-xs-2"></div>
+  <div class="col-xs-5">
+    <label class="col-md-4">Project Name</label>
+    <input class="form-control" type="text" [(ngModel)]="projectName" />
+  </div>
 
-  <label class="col-xs-2">Project Link</label>
-  <input class="col-xs-3 form-control" type="text" [(ngModel)]="projectUrl" />
+  <div class="col-md-2"></div>
+
+  <div class="col-xs-5">
+    <label class="col-md-4">Project Link</label>
+    <input class="form-control" type="text" [(ngModel)]="projectUrl" />
+  </div>
+
 </div>
 
-<table class="row">
-  <tr>
-    <th class="col-xs-5">
-      Place Holder
-    </th>
-    <th class="col-xs-5">
-      Value
-    </th>
-    <th class="col-xs-2"></th>
-  </tr>
-  <tr>
-    <td>
-      <input type="text" class="form-control" [(ngModel)]="currentKV.key" />
-    </td>
-    <td>
-      <input type="text" class="form-control" [(ngModel)]="currentKV.value" />
-    </td>
-    <td>
-      <button type="button" class="btn btn-default" (click)="add(currentKV.key, currentKV.value);">Add</button>
-    </td>
-  </tr>
-
-  <tr *ngFor="let kv of keyValues; let i = index;">
-    <td>
-      {{kv.key}}
-    </td>
-    <td>
-      {{kv.value}}
-    </td>
-    <td>
-      <button type="button" class="btn btn-default" (click)="remove(i);">Remove</button>
-    </td>
-  </tr>
-</table>
+<div class="row" style="height: 20px;"></div>
 
 <div class="row">
-  <button type="button" (click)="generate();">Generate</button>
+  <button type="button" class="btn btn-default" (click)="generate();">Generate</button>
+</div>
+
+<div class="row" style="height: 20px;"> </div>
+
+<div class="row">
+  <label class="col-xs-5"> Place Holder </label>
+  <label class="col-xs-5"> Value </label>
+  <label class="col-xs-2"> </label>
+
+  <div class="col-xs-5">
+    <input type="text" class="form-control" [(ngModel)]="currentKV.key" />
+  </div>
+  <div class="col-xs-5">
+    <input type="text" class="form-control" [(ngModel)]="currentKV.value" />
+  </div>
+  <div class="col-xs-2">
+    <button type="button" class="btn btn-default" (click)="add(currentKV.key, currentKV.value);">Add</button>
+  </div>
+</div>
+
+<div class="row" style="height: 20px;"> </div>
+
+<div class="row" *ngFor="let kv of keyValues; let i = index;">
+  <div class="col-xs-5">
+    {{kv.key}}
+  </div>
+
+  <div class="col-xs-5">
+    {{kv.value}}
+  </div>
+
+  <div class="col-xs-2">
+    <button type="button" class="btn btn-default" (click)="remove(i);">Remove</button>
+  </div>
 </div>

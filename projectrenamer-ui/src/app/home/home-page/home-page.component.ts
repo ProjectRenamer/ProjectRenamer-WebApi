@@ -1,5 +1,5 @@
 import { Component, OnInit, KeyValueDiffers } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { environment } from '@env/environment';
 
 @Component({
@@ -31,13 +31,17 @@ export class HomePageComponent implements OnInit {
   }
 
   generate() {
-    const filename = this.projectName + '.zip';
 
-    this.httpClient.post(environment.DotNetTemplateUrl + '/generator/', {
-      'projectName': this.projectName,
-      'repositoryLink': this.projectUrl,
-      'renamePairs': this.keyValues
-    })
+    this.httpClient.post(environment.DotNetTemplateUrl + '/generator/',
+      {
+        'projectName': this.projectName,
+        'repositoryLink': this.projectUrl,
+        'renamePairs': this.keyValues
+      },
+      {
+        responseType: 'blob'
+      }
+    )
       .subscribe((response) => {
         const blob = new Blob([response], { type: 'application/zip' });
         const url = window.URL.createObjectURL(blob);
