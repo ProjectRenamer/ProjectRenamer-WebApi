@@ -17,7 +17,6 @@ export class HomePageComponent implements OnInit {
   password: string = '';
 
   constructor(private httpClient: HttpClient) {
-
   }
 
   ngOnInit() {
@@ -50,10 +49,21 @@ export class HomePageComponent implements OnInit {
         const blob = new Blob([response], { type: 'application/zip' });
         const url = window.URL.createObjectURL(blob);
         window.open(url);
+
+        this.ResetAllValue();
       },
         err => {
           throw err;
         });
+  }
+
+  ResetAllValue(): void {
+    this.projectUrl = '';
+    this.keyValues = [];
+    this.currentKV = { key: '', value: '' };
+    this.projectName = '';
+    this.userName = '';
+    this.password = '';
   }
 
 }
