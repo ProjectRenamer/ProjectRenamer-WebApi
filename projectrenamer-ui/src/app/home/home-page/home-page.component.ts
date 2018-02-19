@@ -9,10 +9,12 @@ import { environment } from '@env/environment';
 })
 export class HomePageComponent implements OnInit {
 
-  projectUrl: string;
+  projectUrl: string = '';
   keyValues = [];
   currentKV = { key: '', value: '' };
   projectName = '';
+  userName: string = '';
+  password: string = '';
 
   constructor(private httpClient: HttpClient) {
 
@@ -36,7 +38,9 @@ export class HomePageComponent implements OnInit {
       {
         'projectName': this.projectName,
         'repositoryLink': this.projectUrl,
-        'renamePairs': this.keyValues
+        'renamePairs': this.keyValues,
+        'userName': this.userName,
+        'password': this.password
       },
       {
         responseType: 'blob'
