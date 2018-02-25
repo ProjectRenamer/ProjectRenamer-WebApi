@@ -15,6 +15,7 @@ export class HomePageComponent implements OnInit {
   projectName = '';
   userName: string = '';
   password: string = '';
+  branch: string = 'master';
 
   constructor(private httpClient: HttpClient) {
   }
@@ -64,6 +65,7 @@ export class HomePageComponent implements OnInit {
     this.projectName = '';
     this.userName = '';
     this.password = '';
+    this.branch = 'master';
   }
 
 }
