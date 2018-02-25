@@ -16,17 +16,21 @@ namespace ProjectRenamer.Api.Helper
 
             string templatePath = Path.Combine(directory.FullName, $"template-{Guid.NewGuid():N}");
             string zipPath = Path.Combine(directory.FullName, $"{projectName}.zip");
+            try
+            {
+                string clonedRepoPath = Repository.Clone(repositoryLink, templatePath, cloneOptions);
+                
+                new Repository(clonedRepoPath).Dispose();
 
-            string clonedRepoPath = Repository.Clone(repositoryLink, templatePath, cloneOptions);
+                var solutionRenamer = new SolutionRenamer();
+                solutionRenamer.Run(templatePath, renamePairs);
 
-            new Repository(clonedRepoPath).Dispose();
-
-            var solutionRenamer = new SolutionRenamer();
-            solutionRenamer.Run(templatePath, renamePairs);
-
-            ZipFile.CreateFromDirectory(templatePath, zipPath);
-
-            FileHelper.DeleteDirectory(templatePath);
+                ZipFile.CreateFromDirectory(templatePath, zipPath);
+            }
+            finally
+            {
+                FileHelper.DeleteDirectory(templatePath);
+            }
 
             byte[] zipBytes = System.IO.File.ReadAllBytes(zipPath);
 

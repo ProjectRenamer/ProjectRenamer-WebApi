@@ -39,6 +39,7 @@ export class HomePageComponent implements OnInit {
         'projectName': this.projectName,
         'repositoryLink': this.projectUrl,
         'renamePairs': this.keyValues,
+        'branchName': this.branch,
         'userName': this.userName,
         'password': this.password
       },

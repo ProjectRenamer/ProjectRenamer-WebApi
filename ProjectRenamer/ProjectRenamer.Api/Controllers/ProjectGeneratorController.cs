@@ -27,6 +27,7 @@ namespace ProjectRenamer.Api.Controllers
 
             CloneOptions cloneOptions = new CloneOptions
             {
+                BranchName = generateProjectRequest.BranchName,
                 CredentialsProvider = (_url, _user, _cred) => new UsernamePasswordCredentials
                 {
                     Username = generateProjectRequest.UserName,
