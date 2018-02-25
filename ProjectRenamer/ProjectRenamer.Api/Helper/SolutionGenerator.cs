@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using Alternatives.CustomExceptions;
 using LibGit2Sharp;
 
 namespace ProjectRenamer.Api.Helper
@@ -16,17 +18,29 @@ namespace ProjectRenamer.Api.Helper
 
             string templatePath = Path.Combine(directory.FullName, $"template-{Guid.NewGuid():N}");
             string zipPath = Path.Combine(directory.FullName, $"{projectName}.zip");
+            try
+            {
+                string clonedRepoPath = Repository.Clone(repositoryLink, templatePath, cloneOptions);
 
-            string clonedRepoPath = Repository.Clone(repositoryLink, templatePath, cloneOptions);
+                new Repository(clonedRepoPath).Dispose();
 
-            new Repository(clonedRepoPath).Dispose();
+                var solutionRenamer = new SolutionRenamer();
+                solutionRenamer.Run(templatePath, renamePairs);
 
-            var solutionRenamer = new SolutionRenamer();
-            solutionRenamer.Run(templatePath, renamePairs);
-
-            ZipFile.CreateFromDirectory(templatePath, zipPath);
-
-            FileHelper.DeleteDirectory(templatePath);
+                ZipFile.CreateFromDirectory(templatePath, zipPath);
+            }
+            catch (System.IO.PathTooLongException ex)
+            {
+                throw new CustomApiException("File names too long", HttpStatusCode.BadRequest, ex);
+            }
+            catch(LibGit2SharpException ex)
+            {
+                throw new CustomApiException(ex.Message, HttpStatusCode.BadRequest);
+            }
+            finally
+            {
+                FileHelper.DeleteDirectory(templatePath);
+            }
 
             byte[] zipBytes = System.IO.File.ReadAllBytes(zipPath);
 
