@@ -1,6 +1,12 @@
 import { Component, OnInit, KeyValueDiffers } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
+
 import { environment } from '@env/environment';
+
+import { GenerateProjectRequest, KeyValuePair } from '@app/home/requests/GenerateProjectRequest';
+import { GenerateProjectResponse } from '@app/home/responses/GenerateProjectResponse';
+import { DownloadProjectRequest } from '@app/home/requests/DownloadProjectReqeust';
+
 
 @Component({
   selector: 'app-home-page',
@@ -9,64 +15,37 @@ import { environment } from '@env/environment';
 })
 export class HomePageComponent implements OnInit {
 
-  projectUrl: string = '';
-  keyValues = [];
-  currentKV = { key: '', value: '' };
-  projectName = '';
-  userName: string = '';
-  password: string = '';
-  branch: string = 'master';
-
   constructor(private httpClient: HttpClient) {
   }
+
+  generateProjectRequest: GenerateProjectRequest = new GenerateProjectRequest();
+  currentKV: KeyValuePair<string, string> = new KeyValuePair<string, string>();
 
   ngOnInit() {
   }
 
   add(placeHolder: string, val: string) {
-    this.keyValues.push({ key: placeHolder, value: val });
+    this.generateProjectRequest.renamePairs.push({ key: placeHolder, value: val });
     this.currentKV = { key: '', value: '' };
   }
 
   remove(index: number) {
-    this.keyValues.splice(index, 1);
+    this.generateProjectRequest.renamePairs.splice(index, 1);
   }
 
   generate() {
-
-    this.httpClient.post(environment.DotNetTemplateUrl + '/generator/',
-      {
-        'projectName': this.projectName,
-        'repositoryLink': this.projectUrl,
-        'renamePairs': this.keyValues,
-        'branchName': this.branch,
-        'userName': this.userName,
-        'password': this.password
-      },
-      {
-        responseType: 'blob'
-      }
-    )
+    this.httpClient
+      .post<GenerateProjectResponse>(environment.DotNetTemplateUrl + '/generator/', this.generateProjectRequest)
       .subscribe((response) => {
-        const blob = new Blob([response], { type: 'application/zip' });
-        const url = window.URL.createObjectURL(blob);
-        window.open(url);
-
-        this.ResetAllValue();
-      },
-        err => {
-          throw err;
-        });
+        let downloadProjectRequest = new DownloadProjectRequest(response.token);
+        this.httpClient.post(environment.DotNetTemplateUrl + '/generator/', downloadProjectRequest.token, { responseType: 'blob' })
+          .subscribe((response) => {
+            const blob = new Blob([response], { type: 'application/zip' });
+            const url = window.URL.createObjectURL(blob);
+            window.open(url);
+          }
+        );
+      }
+    );
   }
-
-  ResetAllValue(): void {
-    this.projectUrl = '';
-    this.keyValues = [];
-    this.currentKV = { key: '', value: '' };
-    this.projectName = '';
-    this.userName = '';
-    this.password = '';
-    this.branch = 'master';
-  }
-
 }
