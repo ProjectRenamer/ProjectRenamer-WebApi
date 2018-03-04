@@ -25,12 +25,9 @@ namespace ProjectRenamer.Api.Controllers
             SolutionGenerator solutionGenerater = new SolutionGenerator();
             byte[] zipBytes = solutionGenerater.Download(request.Token);
 
-            DirectoryInfo directory = Directory.GetParent(Directory.GetCurrentDirectory());
-            string zipPath = Path.Combine(directory.FullName, $"{request.Token}.zip");
-
             return new FileContentResult(zipBytes, CONTENT_TYPE)
             {
-                FileDownloadName = zipPath
+                FileDownloadName = request.Token
             };
         }
 

@@ -12,11 +12,11 @@ namespace ProjectRenamer.Api.Helper
 {
     public class SolutionGenerator
     {
-        DirectoryInfo directory = Directory.GetParent(Directory.GetCurrentDirectory());
+        DirectoryInfo directory = Directory.CreateDirectory(Directory.GetParent(Directory.GetCurrentDirectory()).FullName + "/temp");
 
         public string Generate(string repositoryLink, string projectName, List<KeyValuePair<string, string>> renamePairs, CloneOptions cloneOptions)
         {
-            string fileName = $"template-{Guid.NewGuid():N}";
+            string fileName = $"{Guid.NewGuid():N}";
             string templatePath = Path.Combine(directory.FullName, fileName);
             try
             {
@@ -41,16 +41,16 @@ namespace ProjectRenamer.Api.Helper
             return fileName;
         }
 
-        public byte[] Download(string fileName)
+        public byte[] Download(string token)
         {
-            string templatePath = Path.Combine(directory.FullName, fileName);
+            string templatePath = Path.Combine(directory.FullName, token);
 
             if (!Directory.Exists(templatePath))
             {
-                throw new CustomApiException($"{fileName} not valid", HttpStatusCode.NotFound);
+                throw new CustomApiException($"{token} not valid", HttpStatusCode.NotFound);
             }
 
-            string zipPath = Path.Combine(directory.FullName, $"{fileName}.zip");
+            string zipPath = Path.Combine(directory.FullName, $"{token}.zip");
             ZipFile.CreateFromDirectory(templatePath, zipPath);
 
             byte[] zipBytes = System.IO.File.ReadAllBytes(zipPath);

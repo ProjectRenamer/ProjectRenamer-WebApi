@@ -1,6 +1,8 @@
 import { Component, OnInit, KeyValueDiffers } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 
+import { HttpErrorResponse } from '@angular/common/http';
+import { CustomError } from '@app/core/error-handling/custom-error';
 import { environment } from '@env/environment';
 
 import { GenerateProjectRequest, KeyValuePair } from '@app/home/requests/GenerateProjectRequest';
@@ -43,9 +45,15 @@ export class HomePageComponent implements OnInit {
             const blob = new Blob([response], { type: 'application/zip' });
             const url = window.URL.createObjectURL(blob);
             window.open(url);
-          }
-        );
+          },
+            (err: HttpErrorResponse) => {
+              if (err.status === 404) {
+                throw new CustomError('Token Not Valid');
+              }
+              throw err;
+            }
+          );
       }
-    );
+      );
   }
 }
