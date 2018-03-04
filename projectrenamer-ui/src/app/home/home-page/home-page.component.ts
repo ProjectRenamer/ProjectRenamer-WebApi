@@ -38,7 +38,7 @@ export class HomePageComponent implements OnInit {
       .post<GenerateProjectResponse>(environment.DotNetTemplateUrl + '/generator/', this.generateProjectRequest)
       .subscribe((response) => {
         let downloadProjectRequest = new DownloadProjectRequest(response.token);
-        this.httpClient.post(environment.DotNetTemplateUrl + '/generator/', downloadProjectRequest.token, { responseType: 'blob' })
+        this.httpClient.post(environment.DotNetTemplateUrl + '/download/', downloadProjectRequest, { responseType: 'blob' })
           .subscribe((response) => {
             const blob = new Blob([response], { type: 'application/zip' });
             const url = window.URL.createObjectURL(blob);

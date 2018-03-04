@@ -45,7 +45,7 @@ namespace ProjectRenamer.Api.Helper
         {
             string templatePath = Path.Combine(directory.FullName, fileName);
 
-            if (!File.Exists(templatePath))
+            if (!Directory.Exists(templatePath))
             {
                 throw new CustomApiException($"{fileName} not valid", HttpStatusCode.NotFound);
             }

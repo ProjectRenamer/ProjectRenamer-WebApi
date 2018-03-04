@@ -20,7 +20,7 @@ namespace ProjectRenamer.Api.Controllers
 
 
         [HttpPost, Route("download")]
-        public FileContentResult Download(DownloadProjectRequest request)
+        public FileContentResult Download([FromBody]DownloadProjectRequest request)
         {
             SolutionGenerator solutionGenerater = new SolutionGenerator();
             byte[] zipBytes = solutionGenerater.Download(request.Token);
