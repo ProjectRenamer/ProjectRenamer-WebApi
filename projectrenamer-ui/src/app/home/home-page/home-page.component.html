@@ -3,17 +3,17 @@
 
     <div class="col-xs-5">
       <label class="col-xs-12">Project Name *</label>
-      <input class="form-control" type="text" [(ngModel)]="projectName" name="projectName" required />
+      <input class="form-control" type="text" [(ngModel)]="generateProjectRequest.projectName" name="generateProjectRequest.projectName" required />
     </div>
 
     <div class="col-xs-5">
       <label class="col-xs-12">Project Link *</label>
-      <input class="form-control" type="text" [(ngModel)]="projectUrl" name="projectUrl" required />
+      <input class="form-control" type="text" [(ngModel)]="generateProjectRequest.repositoryLink" name="generateProjectRequest.repositoryLink" required />
     </div>
 
     <div class="col-xs-2">
       <label class="col-xs-12">Branch *</label>
-      <input class="form-control" type="text" [(ngModel)]="branch" name="branch" required />
+      <input class="form-control" type="text" [(ngModel)]="generateProjectRequest.branchName" name="generateProjectRequest.branchName" required />
     </div>
 
   </div>
@@ -24,12 +24,12 @@
 
     <div class="col-xs-5">
       <label class="col-xs-12">User Name</label>
-      <input class="form-control" type="text" [(ngModel)]="userName" name="userName" />
+      <input class="form-control" type="text" [(ngModel)]="generateProjectRequest.userName" name="generateProjectRequest.userName" />
     </div>
 
     <div class="col-xs-5">
       <label class="col-xs-12">Password</label>
-      <input class="form-control" type="password" [(ngModel)]="password" name="password" />
+      <input class="form-control" type="password" [(ngModel)]="generateProjectRequest.password" name="generateProjectRequest.password" />
     </div>
 
     <div class="col-md-2"></div>
@@ -64,7 +64,7 @@
 
 <div class="row" style="height: 20px;"> </div>
 
-<div class="row" *ngFor="let kv of keyValues; let i = index;">
+<div class="row" *ngFor="let kv of generateProjectRequest.renamePairs; let i = index;">
   <div class="col-xs-5">
     {{kv.key}}
   </div>

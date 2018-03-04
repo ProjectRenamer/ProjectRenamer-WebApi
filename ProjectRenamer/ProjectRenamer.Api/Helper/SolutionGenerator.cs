@@ -12,12 +12,12 @@ namespace ProjectRenamer.Api.Helper
 {
     public class SolutionGenerator
     {
-        public byte[] Generate(string repositoryLink, string projectName, List<KeyValuePair<string, string>> renamePairs, CloneOptions cloneOptions)
-        {
-            DirectoryInfo directory = Directory.GetParent(Directory.GetCurrentDirectory());
+        DirectoryInfo directory = Directory.GetParent(Directory.GetCurrentDirectory());
 
-            string templatePath = Path.Combine(directory.FullName, $"template-{Guid.NewGuid():N}");
-            string zipPath = Path.Combine(directory.FullName, $"{projectName}.zip");
+        public string Generate(string repositoryLink, string projectName, List<KeyValuePair<string, string>> renamePairs, CloneOptions cloneOptions)
+        {
+            string fileName = $"template-{Guid.NewGuid():N}";
+            string templatePath = Path.Combine(directory.FullName, fileName);
             try
             {
                 string clonedRepoPath = Repository.Clone(repositoryLink, templatePath, cloneOptions);
@@ -26,25 +26,37 @@ namespace ProjectRenamer.Api.Helper
 
                 var solutionRenamer = new SolutionRenamer();
                 solutionRenamer.Run(templatePath, renamePairs);
-
-                ZipFile.CreateFromDirectory(templatePath, zipPath);
             }
             catch (System.IO.PathTooLongException ex)
             {
+                FileHelper.DeleteDirectory(templatePath);
                 throw new CustomApiException("File names too long", HttpStatusCode.BadRequest, ex);
             }
-            catch(LibGit2SharpException ex)
-            {
-                throw new CustomApiException(ex.Message, HttpStatusCode.BadRequest);
-            }
-            finally
+            catch (LibGit2SharpException ex)
             {
                 FileHelper.DeleteDirectory(templatePath);
+                throw new CustomApiException(ex.Message, HttpStatusCode.BadRequest);
             }
+
+            return fileName;
+        }
+
+        public byte[] Download(string fileName)
+        {
+            string templatePath = Path.Combine(directory.FullName, fileName);
+
+            if (!Directory.Exists(templatePath))
+            {
+                throw new CustomApiException($"{fileName} not valid", HttpStatusCode.NotFound);
+            }
+
+            string zipPath = Path.Combine(directory.FullName, $"{fileName}.zip");
+            ZipFile.CreateFromDirectory(templatePath, zipPath);
 
             byte[] zipBytes = System.IO.File.ReadAllBytes(zipPath);
 
             System.IO.File.Delete(zipPath);
+            FileHelper.DeleteDirectory(templatePath);
 
             return zipBytes;
         }
