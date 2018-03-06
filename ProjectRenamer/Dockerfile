@@ -7,7 +7,7 @@ RUN dotnet restore
 RUN dotnet publish -c Release -o out
 
 # build runtime image
-FROM microsoft/aspnetcore:2.0
+FROM microsoft/aspnetcore:2.0-jessie
 WORKDIR /app
 COPY --from=build-env /ProjectRenamer/ProjectRenamer.Api/out .
 
