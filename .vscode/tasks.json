@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/ProjectRenamer/ProjectRenamer.Api/ProjectRenamer.Api.csproj"
+                "${workspaceFolder}/ProjectRenamer.Api/ProjectRenamer.Api.csproj"
             ],
             "problemMatcher": "$msCompile"
         }
