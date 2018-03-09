@@ -28,14 +28,14 @@ namespace ProjectRenamer.Api.Filters
             }
             else
             {
-                errorResponse.AddErrorMessage("Unexpected error occured");
+                errorResponse.AddErrorMessage("Unexpected error occured", context.Exception);
                 resultHttpStatusCode = HttpStatusCode.InternalServerError;
             }
 
             context.Result = new ObjectResult(errorResponse)
-                             {
-                                 StatusCode = (int) resultHttpStatusCode,
-                             };
+            {
+                StatusCode = (int)resultHttpStatusCode,
+            };
 
             DoLogging(context.Exception, resultHttpStatusCode);
         }
