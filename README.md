@@ -2,7 +2,7 @@
 
 This project change given key word to another given word for all file and file-content under given .git repoitory.
 
-You can reach docker-container over ![this link](https://hub.docker.com/r/projectrenamer/projectrenamer-webapi/)
+You can reach docker-container over [this link](https://hub.docker.com/r/projectrenamer/projectrenamer-webapi/)
 
 ## Using
 
@@ -17,4 +17,4 @@ If every thing is going well, generator end-point return token value for you. Yo
 ![generator request](https://image.ibb.co/eNMhHn/download.png)
 
 
-Also may be you want to take a look ![ProjectRenamer-UI](https://github.com/ProjectRenamer/ProjectRenamer-UI)
+Also may be you want to take a look [ProjectRenamer-UI](https://github.com/ProjectRenamer/ProjectRenamer-UI)
