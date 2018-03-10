@@ -14,7 +14,7 @@ namespace ProjectRenamer.Api.Helper
     {
         DirectoryInfo directory = Directory.CreateDirectory(Directory.GetParent(Directory.GetCurrentDirectory()).FullName + "/temp");
 
-        public string Generate(string repositoryLink, string projectName, List<KeyValuePair<string, string>> renamePairs, CloneOptions cloneOptions)
+        public string Generate(string repositoryLink, List<KeyValuePair<string, string>> renamePairs, CloneOptions cloneOptions)
         {
             string fileName = $"{Guid.NewGuid():N}";
             string templatePath = Path.Combine(directory.FullName, fileName);

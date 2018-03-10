@@ -50,7 +50,7 @@ namespace ProjectRenamer.Api.Controllers
             };
 
             SolutionGenerator solutionGenerater = new SolutionGenerator();
-            string token = solutionGenerater.Generate(generateProjectRequest.RepositoryLink, generateProjectRequest.ProjectName, generateProjectRequest.RenamePairs, cloneOptions);
+            string token = solutionGenerater.Generate(generateProjectRequest.RepositoryLink, generateProjectRequest.RenamePairs, cloneOptions);
 
             return new GenerateProjectResponse()
             {

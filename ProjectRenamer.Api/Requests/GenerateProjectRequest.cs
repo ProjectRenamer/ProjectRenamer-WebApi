@@ -9,9 +9,6 @@ namespace ProjectRenamer.Api.Requests
     public class GenerateProjectRequest
     {
         [Required]
-        public string ProjectName { get; set; }
-     
-        [Required]
         public string RepositoryLink { get; set; }
        
         [Required]
