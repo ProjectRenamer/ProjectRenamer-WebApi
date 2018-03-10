@@ -1,4 +1,5 @@
 FROM microsoft/aspnetcore-build:2.0 AS build-env
+LABEL maintainer="ademcatamak@gmail.com"
 
 COPY . /ProjectRenamer
 WORKDIR /ProjectRenamer
