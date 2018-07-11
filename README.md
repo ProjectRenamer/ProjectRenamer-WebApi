@@ -4,6 +4,8 @@ This project change given key word to another given word for all file and file-c
 
 You can reach docker-container over [this link](https://hub.docker.com/r/projectrenamer/projectrenamer-webapi/)
 
+You can reach service over [this link](https://project-renamer-api.azurewebsites.net)
+
 ## Using
 
 This WebApi contains 2 endpoint under "ProjectGenerator" controller. One of them is "generator" and another one is "download".
