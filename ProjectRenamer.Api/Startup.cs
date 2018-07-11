@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Text;
-using Alternatives;
-using Alternatives.Extensions;
+﻿using Alternatives;
 using ProjectRenamer.Api.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -19,7 +13,7 @@ namespace ProjectRenamer.Api
 {
     public class Startup
     {
-        private static readonly string _solutionName = Path.GetFileName(Process.GetCurrentProcess().MainModule.FileName);
+        private static readonly string _solutionName = "ProjectRenamer.Api";
 
         private const string ALLOWED_ORIGINS_SECTION_NAME = "AllowedOrigins";
 

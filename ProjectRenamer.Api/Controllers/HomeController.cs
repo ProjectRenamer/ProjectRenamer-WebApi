@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net;
-using Alternatives.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
