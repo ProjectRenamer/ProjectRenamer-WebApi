@@ -31,7 +31,7 @@ namespace ProjectRenamer.Api
         {
             services.AddCors();
             services.AddMvc(options => { options.Filters.Add<GeneralExceptionFilter>(); }).AddJsonOptions(options => { options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver(); });
-            services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new Info {Title = _solutionName, Version = "v1"}); });
+            services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new Info {Title = _solutionName, Version = "v-1"}); });
 
             services.AddTransient<ICryptoEngine, CryptographyEngine>();
 
