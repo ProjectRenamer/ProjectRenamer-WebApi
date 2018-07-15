@@ -16,7 +16,7 @@ namespace ProjectRenamer.Api
         private const string SOLUTION_NAME = "ProjectRenamer.Api";
 
         private const string ALLOWED_ORIGINS_SECTION_NAME = "AllowedOrigins";
-        private const string SWAGGER_VERSION = "v-1";
+        private const string SWAGGER_VERSION = "v1";
 
 
         private IConfiguration Configuration { get; }
