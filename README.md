@@ -1,6 +1,7 @@
 # ProjectRenamer-WebApi
 
 [![Build Status](https://travis-ci.org/ProjectRenamer/ProjectRenamer-WebApi.svg?branch=master)](https://travis-ci.org/ProjectRenamer/ProjectRenamer-WebApi)
+[![Docker Pulls](https://img.shields.io/docker/pulls/projectrenamer/projectrenamer-webapi.svg)](https://hub.docker.com/r/projectrenamer/projectrenamer-webapi)
 
 This project change given key word to another given word for all file and file-content under given .git repoitory.
 
