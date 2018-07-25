@@ -17,6 +17,11 @@ namespace ProjectRenamer.Api.Controllers
         [HttpPost, Route("download")]
         public FileContentResult Download([FromBody]DownloadProjectRequest request)
         {
+            if (!request.IsValid(out string validationMessage))
+            {
+                throw new CustomApiException(validationMessage, HttpStatusCode.BadRequest);
+            }
+
             SolutionGenerator solutionGenerater = new SolutionGenerator();
             byte[] zipBytes = solutionGenerater.Download(request.Token);
 
