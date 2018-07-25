@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore;
+﻿using System;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
 namespace ProjectRenamer.Api
@@ -13,7 +14,7 @@ namespace ProjectRenamer.Api
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
             .UseStartup<Startup>()
-            .UseKestrel()
+            .UseKestrel(o => { o.Limits.KeepAliveTimeout = TimeSpan.FromSeconds(90); })
             .Build();
     }
 }
