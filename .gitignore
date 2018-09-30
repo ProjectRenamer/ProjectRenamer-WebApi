@@ -37,6 +37,9 @@ bld/
 *.VisualState.xml
 TestResult.xml
 
+# User Spesific
+[Tt]emp/
+
 # Build Results of an ATL Project
 [Dd]ebugPS/
 [Rr]eleasePS/

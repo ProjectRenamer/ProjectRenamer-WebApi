@@ -58,7 +58,7 @@ namespace ProjectRenamer.Api.Controllers
         }
 
         [HttpPost, Route("generate-over-zip")]
-        public GenerateProjectResponse GenerateOverZip([FromBody] GenerateProjectWithGivenZipRequest generateProjectWithGivenZipRequest)
+        public GenerateProjectResponse GenerateOverZip([FromForm] GenerateProjectOverZipRequest generateProjectWithGivenZipRequest)
         {
             if (!generateProjectWithGivenZipRequest.IsValid(out string validationMessage))
             {

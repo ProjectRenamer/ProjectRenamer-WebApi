@@ -1,6 +1,0 @@
-﻿{
-  "ConnectionStrings": {
-    "DataContext": "Server=db;database=ProjectDb;uid=AppUser;pwd=AppPass;"
-  },
-  "SqlType": "2"
-}

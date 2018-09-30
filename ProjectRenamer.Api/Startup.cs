@@ -1,11 +1,11 @@
-﻿using ProjectRenamer.Api.Filters;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Serialization;
 using ProjectRenamer.Api.ConfigConstants;
+using ReadyApi.Core.ExceptionFilter;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace ProjectRenamer.Api

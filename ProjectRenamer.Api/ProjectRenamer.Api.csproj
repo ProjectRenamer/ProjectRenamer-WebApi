@@ -3,17 +3,20 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="wwwroot\"/>
+    <Folder Include="wwwroot\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Alternatives" Version="3.0.0"/>
-    <PackageReference Include="LibGit2Sharp" Version="0.25.2"/>
-    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.3"/>
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.0"/>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="2.5.0"/>
-    <PackageReference Include="Alternatives.CustomExceptions" Version="1.0.0"/>
+    <PackageReference Include="Alternatives" Version="3.0.1" />
+    <PackageReference Include="FluentValidation" Version="8.0.100" />
+    <PackageReference Include="LibGit2Sharp" Version="0.25.2" />
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.3" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.4" />
+    <PackageReference Include="ReadyApi.Core" Version="1.0.3" />
+    <PackageReference Include="ReadyApi.Core.ExceptionFilter" Version="1.1.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="2.5.0" />
+    <PackageReference Include="Alternatives.CustomExceptions" Version="1.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.1"/>
+    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.1" />
   </ItemGroup>
 </Project>

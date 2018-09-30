@@ -62,13 +62,19 @@ namespace ProjectRenamer.Api.Helper
         {
             Guard.IsTrue(file == null || file.Length == 0, new CustomApiException("File cannot found", HttpStatusCode.BadRequest));
 
+            string fileExtension = file.FileName.Substring(file.FileName.LastIndexOf(".") + 1);
+
             string fileName = $"{Guid.NewGuid():N}";
             string templatePath = Path.Combine(_directory.FullName, fileName);
+            string templateZipPath = templatePath + $".{fileExtension}";
 
-            using (var stream = new FileStream(templatePath, FileMode.Create))
+            using (var stream = new FileStream(templateZipPath, FileMode.Create))
             {
                 file.CopyTo(stream);
             }
+
+            ZipFile.ExtractToDirectory(templateZipPath, templatePath);
+            File.Delete(templateZipPath);
 
             return fileName;
         }
