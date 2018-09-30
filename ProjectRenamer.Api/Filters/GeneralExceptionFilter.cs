@@ -19,7 +19,7 @@ namespace ProjectRenamer.Api.Filters
 
         public void OnException(ExceptionContext context)
         {
-            ErrorResponse errorResponse = new ErrorResponse();
+            var errorResponse = new ErrorResponse();
             HttpStatusCode resultHttpStatusCode;
             if (context.Exception is CustomApiException customApiException)
             {

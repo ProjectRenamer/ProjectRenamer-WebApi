@@ -1,5 +1,4 @@
-﻿using Alternatives;
-using ProjectRenamer.Api.Filters;
+﻿using ProjectRenamer.Api.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;

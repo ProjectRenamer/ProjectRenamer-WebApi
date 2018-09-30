@@ -1,7 +1,7 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using Alternatives.CustomExceptions;
 using Alternatives.Extensions;
-using LibGit2Sharp;
 using Microsoft.AspNetCore.Mvc;
 using ProjectRenamer.Api.Helper;
 using ProjectRenamer.Api.Requests;
@@ -15,47 +15,64 @@ namespace ProjectRenamer.Api.Controllers
 
 
         [HttpPost, Route("download")]
-        public FileContentResult Download([FromBody]DownloadProjectRequest request)
+        public FileContentResult Download([FromBody] DownloadProjectRequest request)
         {
             if (!request.IsValid(out string validationMessage))
             {
                 throw new CustomApiException(validationMessage, HttpStatusCode.BadRequest);
             }
 
-            SolutionGenerator solutionGenerater = new SolutionGenerator();
+            var solutionGenerater = new SolutionGenerator();
             byte[] zipBytes = solutionGenerater.Download(request.Token);
 
             return new FileContentResult(zipBytes, CONTENT_TYPE)
-            {
-                FileDownloadName = request.Token
-            };
+                   {
+                       FileDownloadName = request.Token
+                   };
         }
 
         [HttpPost, Route("generator")]
-        public GenerateProjectResponse Generate([FromBody] GenerateProjectRequest generateProjectRequest)
+        [Obsolete("generate-over-git endpoint should be used")]
+        public GenerateProjectResponse Generate([FromBody] GenerateProjectOverGitRequest generateProjectOverGitRequest)
         {
-            if (!generateProjectRequest.IsValid(out string validationMessage))
+            return GenerateOverGit(generateProjectOverGitRequest);
+        }
+
+        [HttpPost, Route("generate-over-git")]
+        public GenerateProjectResponse GenerateOverGit([FromBody] GenerateProjectOverGitRequest generateProjectOverGitRequest)
+        {
+            if (!generateProjectOverGitRequest.IsValid(out string validationMessage))
             {
                 throw new CustomApiException(validationMessage, HttpStatusCode.BadRequest);
             }
 
-            CloneOptions cloneOptions = new CloneOptions
-            {
-                BranchName = generateProjectRequest.BranchName,
-                CredentialsProvider = (_url, _user, _cred) => new UsernamePasswordCredentials
-                {
-                    Username = generateProjectRequest.UserName,
-                    Password = generateProjectRequest.Password
-                }
-            };
 
-            SolutionGenerator solutionGenerater = new SolutionGenerator();
-            string token = solutionGenerater.Generate(generateProjectRequest.RepositoryLink, generateProjectRequest.RenamePairs, cloneOptions);
+            var solutionGenerater = new SolutionGenerator();
+            string fileName = solutionGenerater.DownloadRepoFromGit(generateProjectOverGitRequest.RepositoryLink, generateProjectOverGitRequest.BranchName, generateProjectOverGitRequest.UserName, generateProjectOverGitRequest.Password);
+            string token = solutionGenerater.Generate(fileName, generateProjectOverGitRequest.RenamePairs);
 
-            return new GenerateProjectResponse()
+            return new GenerateProjectResponse
+                   {
+                       Token = token
+                   };
+        }
+
+        [HttpPost, Route("generate-over-zip")]
+        public GenerateProjectResponse GenerateOverZip([FromBody] GenerateProjectWithGivenZipRequest generateProjectWithGivenZipRequest)
+        {
+            if (!generateProjectWithGivenZipRequest.IsValid(out string validationMessage))
             {
-                Token = token
-            };
+                throw new CustomApiException(validationMessage, HttpStatusCode.BadRequest);
+            }
+
+            var solutionGenerater = new SolutionGenerator();
+            string fileName = solutionGenerater.Upload(generateProjectWithGivenZipRequest.ZipFile);
+            string token = solutionGenerater.Generate(fileName, generateProjectWithGivenZipRequest.RenamePairs);
+
+            return new GenerateProjectResponse
+                   {
+                       Token = token
+                   };
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Text;
 using Alternatives.CustomExceptions;
 using Microsoft.AspNetCore.Mvc;
 using ProjectRenamer.Api.Controllers;
@@ -30,7 +29,7 @@ namespace ProjectRenamer.Api.Test.ProjectGeneratorControllerTest
         [Fact]
         public void WhenTokenIsNotExist_CustomApiExceptionOccurs()
         {
-            DownloadProjectRequest downloadProjectRequest = new DownloadProjectRequest()
+            var downloadProjectRequest = new DownloadProjectRequest()
             {
                 Token = Guid.NewGuid().ToString()
             };

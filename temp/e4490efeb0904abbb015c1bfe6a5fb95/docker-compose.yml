@@ -1,0 +1,63 @@
+version : "3"
+
+services:
+
+  db :
+    image : mysql/mysql-server:5.7
+    environment :
+      - MYSQL_USER=AppUser
+      - MYSQL_PASSWORD=AppPass
+      - MYSQL_ROOT_PASSWORD=RootPass
+      - MYSQL_DATABASE=ProjectDb
+      - MYSQL_ROOT_HOST=%
+    ports:
+      - 3306:3306
+    # volumes:
+    #   - /var/container_data/DotNet.Template/mysql:/var/lib/mysql
+
+  migration :
+    build :
+      context : ./DotNet.Template
+      dockerfile : Migrator.Dockerfile
+    image : dotnet-template-migrator
+    restart: on-failure
+    depends_on:
+      - db
+    links:
+      - db
+
+  webapi :
+    build :
+      context : ./DotNet.Template/
+      dockerfile : Api.Dockerfile
+    image : dotnet-template-api
+    expose :
+      - 80
+    restart: always
+    depends_on:
+      - migration
+    links:
+      - db
+
+  lb:
+    image: dockercloud/haproxy:1.6.7
+    links:
+      - webapi
+    ports:
+      - 8091:80
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  kibana:
+    image: nshou/elasticsearch-kibana
+    ports:
+      - 9200:9200
+      - 5601:5601
+
+  webui :
+    build :
+      context : ./angular-template
+      dockerfile : Dockerfile
+    image : angular-template
+    ports :
+      - 8090:80

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ProjectRenamer.Api.Requests
 {
-    public class GenerateProjectRequest
+    public class GenerateProjectOverGitRequest
     {
         [Required]
         public string RepositoryLink { get; set; }

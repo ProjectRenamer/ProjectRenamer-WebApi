@@ -1,0 +1,7 @@
+<table>
+  <tr>
+    <td *ngFor="let link of linkArray; let i = index;">
+      <a routerLink="{{link.url}}">{{link.displayName}}</a>
+    </td>
+  </tr>
+</table>

@@ -1,0 +1,6 @@
+﻿{
+  "ConnectionStrings": {
+    "DataContext": "Data Source=TemplateDb.sqlite;"
+  },
+  "SqlType": "1"
+}

@@ -3,27 +3,36 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
+using Alternatives;
 using Alternatives.CustomExceptions;
 using LibGit2Sharp;
+using Microsoft.AspNetCore.Http;
 
 namespace ProjectRenamer.Api.Helper
 {
     public class SolutionGenerator
     {
-        DirectoryInfo directory = Directory.CreateDirectory(Directory.GetParent(Directory.GetCurrentDirectory()).FullName + "/temp");
+        private readonly DirectoryInfo _directory = Directory.CreateDirectory(Directory.GetParent(Directory.GetCurrentDirectory()).FullName + "/temp");
 
-        public string Generate(string repositoryLink, List<KeyValuePair<string, string>> renamePairs, CloneOptions cloneOptions)
+        public string DownloadRepoFromGit(string repositoryLink, string branchName, string userName, string pass)
         {
             string fileName = $"{Guid.NewGuid():N}";
-            string templatePath = Path.Combine(directory.FullName, fileName);
+            string templatePath = Path.Combine(_directory.FullName, fileName);
+
+            var cloneOptions = new CloneOptions
+                               {
+                                   BranchName = branchName,
+                                   CredentialsProvider = (_url, _user, _cred) => new UsernamePasswordCredentials
+                                                                                 {
+                                                                                     Username = userName,
+                                                                                     Password = pass
+                                                                                 }
+                               };
+
             try
             {
                 string clonedRepoPath = Repository.Clone(repositoryLink, templatePath, cloneOptions);
-
                 new Repository(clonedRepoPath).Dispose();
-
-                var solutionRenamer = new SolutionRenamer();
-                solutionRenamer.Run(templatePath, renamePairs);
             }
             catch (System.IO.PathTooLongException ex)
             {
@@ -39,16 +48,41 @@ namespace ProjectRenamer.Api.Helper
             return fileName;
         }
 
+        public string Generate(string fileName, List<KeyValuePair<string, string>> renamePairs)
+        {
+            string templatePath = Path.Combine(_directory.FullName, fileName);
+
+            var solutionRenamer = new SolutionRenamer();
+            solutionRenamer.Run(templatePath, renamePairs);
+
+            return fileName;
+        }
+
+        public string Upload(IFormFile file)
+        {
+            Guard.IsTrue(file == null || file.Length == 0, new CustomApiException("File cannot found", HttpStatusCode.BadRequest));
+
+            string fileName = $"{Guid.NewGuid():N}";
+            string templatePath = Path.Combine(_directory.FullName, fileName);
+
+            using (var stream = new FileStream(templatePath, FileMode.Create))
+            {
+                file.CopyTo(stream);
+            }
+
+            return fileName;
+        }
+
         public byte[] Download(string token)
         {
-            string templatePath = Path.Combine(directory.FullName, token);
+            string templatePath = Path.Combine(_directory.FullName, token);
 
             if (!Directory.Exists(templatePath))
             {
                 throw new CustomApiException($"{token} not valid", HttpStatusCode.NotFound);
             }
 
-            string zipPath = Path.Combine(directory.FullName, $"{token}.zip");
+            string zipPath = Path.Combine(_directory.FullName, $"{token}.zip");
             ZipFile.CreateFromDirectory(templatePath, zipPath);
 
             byte[] zipBytes = System.IO.File.ReadAllBytes(zipPath);

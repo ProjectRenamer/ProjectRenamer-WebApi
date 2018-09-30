@@ -1,11 +1,8 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using Alternatives.CustomExceptions;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 using ProjectRenamer.Api.Controllers;
 using ProjectRenamer.Api.Requests;
 using ProjectRenamer.Api.Responses;
@@ -24,9 +21,9 @@ namespace ProjectRenamer.Api.Test
 
         [Theory]
         [MemberData(nameof(InvalidRequests))]
-        public void WhenRequestIsInvalid_CustomApiExceptionOccurs(GenerateProjectRequest generateProjectRequest)
+        public void WhenRequestIsInvalid_CustomApiExceptionOccurs(GenerateProjectOverGitRequest generateProjectOverGitRequest)
         {
-            var customApiException = Assert.Throws<CustomApiException>(() => _sut.Generate(generateProjectRequest));
+            var customApiException = Assert.Throws<CustomApiException>(() => _sut.GenerateOverGit(generateProjectOverGitRequest));
             Assert.Equal(HttpStatusCode.BadRequest, customApiException.ReturnHttpStatusCode);
         }
 
@@ -34,26 +31,26 @@ namespace ProjectRenamer.Api.Test
         [Fact]
         public void WhenLinkIsInvalid_CustomApiExceptionOccurs()
         {
-            GenerateProjectRequest generateProjectRequest = new GenerateProjectRequest()
+            var generateProjectOverGitRequest = new GenerateProjectOverGitRequest()
             {
                 RepositoryLink = "invalid",
                 RenamePairs = new List<KeyValuePair<string, string>>(),
                 BranchName = "master"
             };
-            var customApiException = Assert.Throws<CustomApiException>(() => _sut.Generate(generateProjectRequest));
+            var customApiException = Assert.Throws<CustomApiException>(() => _sut.GenerateOverGit(generateProjectOverGitRequest));
             Assert.Equal(HttpStatusCode.BadRequest, customApiException.ReturnHttpStatusCode);
         }
 
         [Fact(Skip = "This function used during download test")]
         public string WhenOperationCompleted_FileShoulBeExistWithNameofToken()
         {
-            GenerateProjectRequest generateProjectRequest = new GenerateProjectRequest()
+            var generateProjectOverGitRequest = new GenerateProjectOverGitRequest()
             {
                 RepositoryLink = validGitRepoAddress,
                 RenamePairs = new List<KeyValuePair<string, string>>(),
                 BranchName = "master"
             };
-            GenerateProjectResponse response = _sut.Generate(generateProjectRequest);
+            GenerateProjectResponse response = _sut.GenerateOverGit(generateProjectOverGitRequest);
 
             Assert.NotNull(response);
             Assert.NotEmpty(response.Token);
@@ -70,10 +67,10 @@ namespace ProjectRenamer.Api.Test
             var result = new List<object[]>
             {
                 new object[]{ null},
-                new object[]{ new GenerateProjectRequest()},
-                new object[]{ new GenerateProjectRequest{BranchName = "master", RenamePairs = new List<KeyValuePair<string, string>>()} },
-                new object[]{ new GenerateProjectRequest{BranchName = "master", RepositoryLink = validGitRepoAddress } },
-                new object[]{ new GenerateProjectRequest{ RenamePairs = new List<KeyValuePair<string, string>>() , RepositoryLink = validGitRepoAddress} },
+                new object[]{ new GenerateProjectOverGitRequest()},
+                new object[]{ new GenerateProjectOverGitRequest{BranchName = "master", RenamePairs = new List<KeyValuePair<string, string>>()} },
+                new object[]{ new GenerateProjectOverGitRequest{BranchName = "master", RepositoryLink = validGitRepoAddress } },
+                new object[]{ new GenerateProjectOverGitRequest{ RenamePairs = new List<KeyValuePair<string, string>>() , RepositoryLink = validGitRepoAddress} },
             };
 
             return result;
