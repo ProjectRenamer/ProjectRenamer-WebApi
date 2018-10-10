@@ -1,10 +1,17 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using Alternatives.Extensions;
+using FluentValidation;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Serialization;
 using ProjectRenamer.Api.ConfigConstants;
+using ProjectRenamer.Api.Helper;
 using ReadyApi.Core.ExceptionFilter;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -12,12 +19,6 @@ namespace ProjectRenamer.Api
 {
     public class Startup
     {
-        private const string SOLUTION_NAME = "ProjectRenamer.Api";
-
-        private const string ALLOWED_ORIGINS_SECTION_NAME = "AllowedOrigins";
-        private const string SWAGGER_VERSION = "v1";
-
-
         private IConfiguration Configuration { get; }
         private IHostingEnvironment HostingEnvironment { get; }
         private IServiceCollection Services { get; set; }
@@ -32,12 +33,48 @@ namespace ProjectRenamer.Api
         {
             services.AddCors();
             services.AddMvc(options => { options.Filters.Add<GeneralExceptionFilter>(); }).AddJsonOptions(options => { options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver(); });
-            services.AddSwaggerGen(c => { c.SwaggerDoc(SWAGGER_VERSION, new Info { Title = SOLUTION_NAME, Version = SWAGGER_VERSION }); });
+            services.AddSwaggerGen(c => { c.SwaggerDoc(AppConstants.SWAGGER_VERSION, new Info {Title = AppConstants.SOLUTION_NAME, Version = AppConstants.SWAGGER_VERSION}); });
 
-            services.Configure<AllowedOriginsConstants>(Configuration.GetSection(ALLOWED_ORIGINS_SECTION_NAME));
+            services.Configure<AllowedOriginsConstants>(Configuration.GetSection(AppConstants.ALLOWED_ORIGINS_SECTION_NAME));
+
+            var assemblies = GetAssemblies();
+
+            #region Validators
+
+            IEnumerable<Type> validators = GetValidators(assemblies);
+
+            foreach (Type validator in validators)
+            {
+                services.AddTransient(validator);
+            }
+
+            services.AddTransient<ValidatorResolver>();
+
+            #endregion
 
             Services = services;
         }
+
+        public static Assembly[] GetAssemblies()
+        {
+            Assembly[] assemblies = Assembly.GetEntryAssembly()
+                                            .GetReferencedAssemblies()
+                                            .Select(Assembly.Load).ToArray();
+
+            return assemblies;
+        }
+
+        public static IEnumerable<Type> GetValidators(Assembly[] assemblies)
+        {
+            IEnumerable<Type> validators = typeof(AbstractValidator<>)
+                                           .GetInheritedTypes(true, assemblies)
+                                           .Where(type => type.IsClass
+                                                          && !type.IsAbstract
+                                                          && type.FullName.Contains(AppConstants.SOLUTION_NAME));
+
+            return validators;
+        }
+
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IOptions<AllowedOriginsConstants> allowedOriginsOptions)
         {
@@ -54,7 +91,7 @@ namespace ProjectRenamer.Api
             app.UseAuthentication();
             app.UseMvc();
             app.UseSwagger();
-            app.UseSwaggerUI(c => { c.SwaggerEndpoint($"/swagger/{SWAGGER_VERSION}/swagger.json", $"{SOLUTION_NAME} {SWAGGER_VERSION}"); });
+            app.UseSwaggerUI(c => { c.SwaggerEndpoint($"/swagger/{AppConstants.SWAGGER_VERSION}/swagger.json", $"{AppConstants.SOLUTION_NAME} {AppConstants.SWAGGER_VERSION}"); });
         }
     }
 }

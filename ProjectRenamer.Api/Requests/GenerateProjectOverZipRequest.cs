@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
+using ProjectRenamer.Api.Helper;
+using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace ProjectRenamer.Api.Requests
 {
@@ -17,6 +19,9 @@ namespace ProjectRenamer.Api.Requests
 
     public class GenerateProjectOverZipRequestValidator : AbstractValidator<GenerateProjectOverZipRequest>
     {
+        protected override bool PreValidate(ValidationContext<GenerateProjectOverZipRequest> context, ValidationResult result)
+            => PreValidations.NullPreValidation(context, result);
+
         public GenerateProjectOverZipRequestValidator()
         {
             RuleFor(r => r.RenamePairs).NotNull();

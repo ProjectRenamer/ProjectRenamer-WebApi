@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using AutoMapper;
 using FluentValidation;
+using ProjectRenamer.Api.Helper;
+using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace ProjectRenamer.Api.Requests
 {
@@ -23,6 +24,9 @@ namespace ProjectRenamer.Api.Requests
 
     public class GenerateProjectOverGitRequestValidator : AbstractValidator<GenerateProjectOverGitRequest>
     {
+        protected override bool PreValidate(ValidationContext<GenerateProjectOverGitRequest> context, ValidationResult result)
+            => PreValidations.NullPreValidation(context, result);
+
         public GenerateProjectOverGitRequestValidator()
         {
             RuleFor(r => r.RepositoryLink).NotEmpty();

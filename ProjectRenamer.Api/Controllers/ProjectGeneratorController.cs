@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Net;
+using Alternatives;
 using Alternatives.CustomExceptions;
-using Alternatives.Extensions;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using ProjectRenamer.Api.Helper;
 using ProjectRenamer.Api.Requests;
@@ -11,16 +12,20 @@ namespace ProjectRenamer.Api.Controllers
 {
     public class ProjectGeneratorController : Controller
     {
+        private readonly ValidatorResolver _validatorResolver;
         private const string CONTENT_TYPE = "application/zip";
 
+        public ProjectGeneratorController(ValidatorResolver validatorResolver)
+        {
+            _validatorResolver = validatorResolver;
+        }
 
         [HttpPost, Route("download")]
         public FileContentResult Download([FromBody] DownloadProjectRequest request)
         {
-            if (!request.IsValid(out string validationMessage))
-            {
-                throw new CustomApiException(validationMessage, HttpStatusCode.BadRequest);
-            }
+            var downloadProjectRequestValidator = _validatorResolver.Resolve<DownloadProjectRequestValidator>();
+            ValidationResult validationResult = downloadProjectRequestValidator.Validate(request);
+            Guard.IsFalse(validationResult.IsValid, new CustomApiException(validationResult.ToString(), HttpStatusCode.BadRequest));
 
             var solutionGenerater = new SolutionGenerator();
             byte[] zipBytes = solutionGenerater.Download(request.Token);
@@ -41,11 +46,9 @@ namespace ProjectRenamer.Api.Controllers
         [HttpPost, Route("generate-over-git")]
         public GenerateProjectResponse GenerateOverGit([FromBody] GenerateProjectOverGitRequest generateProjectOverGitRequest)
         {
-            if (!generateProjectOverGitRequest.IsValid(out string validationMessage))
-            {
-                throw new CustomApiException(validationMessage, HttpStatusCode.BadRequest);
-            }
-
+            var generateProjectOverGitRequestValidator = _validatorResolver.Resolve<GenerateProjectOverGitRequestValidator>();
+            ValidationResult validationResult = generateProjectOverGitRequestValidator.Validate(generateProjectOverGitRequest);
+            Guard.IsFalse(validationResult.IsValid, new CustomApiException(validationResult.ToString(), HttpStatusCode.BadRequest));
 
             var solutionGenerater = new SolutionGenerator();
             string fileName = solutionGenerater.DownloadRepoFromGit(generateProjectOverGitRequest.RepositoryLink, generateProjectOverGitRequest.BranchName, generateProjectOverGitRequest.UserName, generateProjectOverGitRequest.Password);
@@ -60,10 +63,9 @@ namespace ProjectRenamer.Api.Controllers
         [HttpPost, Route("generate-over-zip")]
         public GenerateProjectResponse GenerateOverZip([FromForm] GenerateProjectOverZipRequest generateProjectWithGivenZipRequest)
         {
-            if (!generateProjectWithGivenZipRequest.IsValid(out string validationMessage))
-            {
-                throw new CustomApiException(validationMessage, HttpStatusCode.BadRequest);
-            }
+            var generateProjectOverZipRequestValidator = _validatorResolver.Resolve<GenerateProjectOverZipRequestValidator>();
+            ValidationResult validationResult = generateProjectOverZipRequestValidator.Validate(generateProjectWithGivenZipRequest);
+            Guard.IsFalse(validationResult.IsValid, new CustomApiException(validationResult.ToString(), HttpStatusCode.BadRequest));
 
             var solutionGenerater = new SolutionGenerator();
             string fileName = solutionGenerater.Upload(generateProjectWithGivenZipRequest.ZipFile);
