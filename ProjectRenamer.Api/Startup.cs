@@ -45,7 +45,7 @@ namespace ProjectRenamer.Api
 
             foreach (Type validator in validators)
             {
-                services.AddTransient(validator);
+                services.AddTransient(typeof(IValidator),validator);
             }
 
             services.AddTransient<ValidatorResolver>();
@@ -55,19 +55,23 @@ namespace ProjectRenamer.Api
             Services = services;
         }
 
-        public static Assembly[] GetAssemblies()
+        public static IEnumerable<Assembly> GetAssemblies()
         {
-            Assembly[] assemblies = Assembly.GetEntryAssembly()
-                                            .GetReferencedAssemblies()
-                                            .Select(Assembly.Load).ToArray();
+            var assemblies = new List<Assembly>();
+            Assembly startupAssembly = typeof(Startup).Assembly;
+
+            assemblies.Add(startupAssembly);
+            assemblies.AddRange(startupAssembly
+                                .GetReferencedAssemblies()
+                                .Select(Assembly.Load));
 
             return assemblies;
         }
 
-        public static IEnumerable<Type> GetValidators(Assembly[] assemblies)
+        public static IEnumerable<Type> GetValidators(IEnumerable<Assembly> assemblies)
         {
-            IEnumerable<Type> validators = typeof(AbstractValidator<>)
-                                           .GetInheritedTypes(true, assemblies)
+            IEnumerable<Type> validators = typeof(IValidator)
+                                           .GetInheritedTypes(true, assemblies.ToArray())
                                            .Where(type => type.IsClass
                                                           && !type.IsAbstract
                                                           && type.FullName.Contains(AppConstants.SOLUTION_NAME));

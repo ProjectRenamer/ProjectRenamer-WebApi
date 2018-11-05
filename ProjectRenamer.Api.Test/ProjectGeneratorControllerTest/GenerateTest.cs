@@ -12,7 +12,7 @@ using Xunit;
 
 namespace ProjectRenamer.Api.Test.ProjectGeneratorControllerTest
 {
-    public class GenerateTest : IClassFixture<ValidationFailure>
+    public class GenerateTest : IClassFixture<ValidationFixture>
     {
         const string validGitRepoAddress = "https://github.com/AdemCatamak/DotNet.Template.With.Angular.git";
         private ProjectGeneratorController _sut;

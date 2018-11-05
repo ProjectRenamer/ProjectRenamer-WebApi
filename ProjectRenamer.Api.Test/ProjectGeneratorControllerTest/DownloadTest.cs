@@ -11,7 +11,7 @@ using Xunit;
 
 namespace ProjectRenamer.Api.Test.ProjectGeneratorControllerTest
 {
-    public class DownloadTest : IClassFixture<ValidationFailure>
+    public class DownloadTest : IClassFixture<ValidationFixture>
     {
         private readonly ValidationFixture _validationFixture;
         private ProjectGeneratorController _sut;

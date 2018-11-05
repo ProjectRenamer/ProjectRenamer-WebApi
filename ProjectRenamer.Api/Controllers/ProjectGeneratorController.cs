@@ -27,8 +27,8 @@ namespace ProjectRenamer.Api.Controllers
             ValidationResult validationResult = downloadProjectRequestValidator.Validate(request);
             Guard.IsFalse(validationResult.IsValid, new CustomApiException(validationResult.ToString(), HttpStatusCode.BadRequest));
 
-            var solutionGenerater = new SolutionGenerator();
-            byte[] zipBytes = solutionGenerater.Download(request.Token);
+            var solutionGenerator = new SolutionGenerator();
+            byte[] zipBytes = solutionGenerator.Download(request.Token);
 
             return new FileContentResult(zipBytes, CONTENT_TYPE)
                    {
@@ -50,9 +50,9 @@ namespace ProjectRenamer.Api.Controllers
             ValidationResult validationResult = generateProjectOverGitRequestValidator.Validate(generateProjectOverGitRequest);
             Guard.IsFalse(validationResult.IsValid, new CustomApiException(validationResult.ToString(), HttpStatusCode.BadRequest));
 
-            var solutionGenerater = new SolutionGenerator();
-            string fileName = solutionGenerater.DownloadRepoFromGit(generateProjectOverGitRequest.RepositoryLink, generateProjectOverGitRequest.BranchName, generateProjectOverGitRequest.UserName, generateProjectOverGitRequest.Password);
-            string token = solutionGenerater.Generate(fileName, generateProjectOverGitRequest.RenamePairs);
+            var solutionGenerator = new SolutionGenerator();
+            string fileName = solutionGenerator.DownloadRepoFromGit(generateProjectOverGitRequest.RepositoryLink, generateProjectOverGitRequest.BranchName, generateProjectOverGitRequest.UserName, generateProjectOverGitRequest.Password);
+            string token = solutionGenerator.Generate(fileName, generateProjectOverGitRequest.RenamePairs);
 
             return new GenerateProjectResponse
                    {
@@ -67,9 +67,9 @@ namespace ProjectRenamer.Api.Controllers
             ValidationResult validationResult = generateProjectOverZipRequestValidator.Validate(generateProjectWithGivenZipRequest);
             Guard.IsFalse(validationResult.IsValid, new CustomApiException(validationResult.ToString(), HttpStatusCode.BadRequest));
 
-            var solutionGenerater = new SolutionGenerator();
-            string fileName = solutionGenerater.Upload(generateProjectWithGivenZipRequest.ZipFile);
-            string token = solutionGenerater.Generate(fileName, generateProjectWithGivenZipRequest.RenamePairs);
+            var solutionGenerator = new SolutionGenerator();
+            string fileName = solutionGenerator.Upload(generateProjectWithGivenZipRequest.ZipFile);
+            string token = solutionGenerator.Generate(fileName, generateProjectWithGivenZipRequest.RenamePairs);
 
             return new GenerateProjectResponse
                    {

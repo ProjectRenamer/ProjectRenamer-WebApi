@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Text;
 using FluentValidation;
 using ProjectRenamer.Api.Helper;
+using ProjectRenamer.Api.Requests;
 
 namespace ProjectRenamer.Api.Test.Fixture
 {
@@ -13,8 +14,8 @@ namespace ProjectRenamer.Api.Test.Fixture
 
         public ValidationFixture()
         {
-            var validatorTypes = Startup.GetValidators(Startup.GetAssemblies());
-            List<IValidator> validators = new List<IValidator>();
+            IEnumerable<Type> validatorTypes = Startup.GetValidators(Startup.GetAssemblies());
+            var validators = new List<IValidator>();
 
             foreach (Type validatorType in validatorTypes)
             {

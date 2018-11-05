@@ -37,7 +37,7 @@ namespace ProjectRenamer.Api.Helper
             catch (System.IO.PathTooLongException ex)
             {
                 FileHelper.DeleteDirectory(templatePath);
-                throw new CustomApiException("File names too long", HttpStatusCode.BadRequest, ex);
+                throw new CustomApiException("File names are too long", HttpStatusCode.BadRequest, ex);
             }
             catch (LibGit2SharpException ex)
             {

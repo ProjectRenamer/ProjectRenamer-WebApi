@@ -28,7 +28,7 @@ namespace ProjectRenamer.Api.Requests
             RuleForEach(r => r.RenamePairs).Must(pair => !string.IsNullOrWhiteSpace(pair.Key) && !string.IsNullOrWhiteSpace(pair.Value))
                                            .WithMessage("Rename Pairs should not contain empty value");
 
-            RuleFor(r => r.ZipFile).Must(file => file != null && file.Length == 0)
+            RuleFor(r => r.ZipFile).Must(file => file != null && file.Length > 0)
                                    .WithMessage("Zip file should not be empty");
 
             RuleFor(r => r.ZipFile).Must(f => f.FileName.EndsWith(".zip", StringComparison.CurrentCultureIgnoreCase))
