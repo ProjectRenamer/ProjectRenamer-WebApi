@@ -1,11 +1,7 @@
 language: csharp
 dotnet: 2.0
 script:
-- ./build.sh --azure_uri=$azure_uri --azure_uname=$azure_uname --azure_pass=$azure_pass
-
-branches:
-  only:
-  - master
+- ./build.sh --azure_uri=$azure_uri --azure_uname=$azure_uname --azure_pass=$azure_pass --branchName=$TRAVIS_BRANCH
 
 notifications:
   email:

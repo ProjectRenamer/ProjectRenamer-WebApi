@@ -2,6 +2,7 @@
  
  // STAGE NAMES
 
+string CheckEnvVarStage = "Check Env Var";
 string StageClean       = "Clean";
 string StageRestore     = "Restore";
 string StageBuild       = "Build";
@@ -17,43 +18,40 @@ string StageDefault     = "RESULT";
 string config          = Argument("config", "Release");
 string slnPath         = Argument("sln_path", "./ProjectRenamer.WebApi.sln");
 string webAppPath      = Argument("web_app_path", "./ProjectRenamer.Api/ProjectRenamer.Api.csproj");
-string migratorAppPath = Argument($"migrator_app_path", FindMigratorAppDll());
 string baseUri         = Argument("azure_uri", ""); //https://{yoursite}.scm.azurewebsites.net
 string userName        = Argument("azure_uname", "");
 string password        = Argument("azure_pass","");
+string branchName      = Argument("branchName","");
+string selectedEnv     = string.Empty;
+
+var BranchEnvironmentPairs = new Dictionary<string, string>()
+{
+    {"master","prod" }
+};
+
+string[] AutoReleaseEnv = new []
+{
+    "prod"
+};
+
 
 string outputPath       = "./dist";
-
-public string FindMigratorAppDll()
-{
-    var migrators = GetFiles("./**/" + config + "/**/*.Migrator.dll");
-    var file = migrators.FirstOrDefault();
-    return file?.ToString() ?? string.Empty;
-}
 
 Task(StageDefault)
 .IsDependentOn(StagePublish);
 
 Task(StagePublish)
-.IsDependentOn(StageMigrate)
+.IsDependentOn(StagePack)
 .Does(()=> 
 {
+    if(!AutoReleaseEnv.Contains(selectedEnv))
+    {
+        Console.WriteLine($"Auto Release is deactive for this environment [{selectedEnv}]. [BranchName : {branchName}]");
+        return;
+    }
+
     IKuduClient kuduClient = KuduClient(baseUri, userName, password);
     kuduClient.ZipDeployDirectory(outputPath);
-});
-
-Task(StageMigrate)
-.IsDependentOn(StagePack)
-.Does(()=>
-{
-    if(!string.IsNullOrEmpty(migratorAppPath))
-    {
-        DotNetCoreExecute(migratorAppPath);
-    }
-    else
-    {
-        Console.WriteLine("Migrator not found");    
-    }
 });
 
 Task(StagePack)
@@ -121,6 +119,7 @@ Task(StageRestore)
 
 
 Task(StageClean)
+.IsDependentOn(CheckEnvVarStage)
 .Does(()=>
 {
     var objDirectories = GetDirectories("./**/obj/*");
@@ -145,8 +144,24 @@ Task(StageClean)
             Recursive  = true
         });
     }
-    
 });
 
+Task(CheckEnvVarStage)
+.Does(()=>
+{
+    if(string.IsNullOrEmpty(branchName))
+    {
+        throw new Exception("Branch Name should be provided");
+    }
+    Console.WriteLine("Branch Name = " + branchName);
+
+    if(BranchEnvironmentPairs.ContainsKey(branchName))
+    {
+        selectedEnv = BranchEnvironmentPairs[branchName];
+    }
+
+    Console.WriteLine("Selected Env = " + selectedEnv);
+
+});
 
 RunTarget(StageDefault);
